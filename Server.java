@@ -13,12 +13,10 @@ public class Server {
     public static void main(String[] args){
         new Server().listenClient();
     }
-
     private Map<Integer, Socket> clients1 = new HashMap<Integer, Socket>();
     private List<mythread> clients=new ArrayList<>() ;
     private boolean started=false;
-    private DataOutputStream dos=null;
-
+    private ServerSocket ss=null;
     public Server() {
        started=true;
     }
@@ -28,63 +26,29 @@ public class Server {
         int port = 12345;
         String temp = "";
         try {
-            ServerSocket server = new ServerSocket(port);
+             ss= new ServerSocket(port);
             // server尝试接收其他Socket的连接请求，server的accept方法是阻塞式的
             int num=0;
             while (started) {
                 System.out.printf("服务器端正在监听 %d\n",num++);
-                Socket socket = server.accept();
-                clients1.put(socket.getPort(), socket);
-                temp = "客户端"+socket.getPort()+":连接";
-                System.out.println(temp);
+                Socket socket = ss.accept();
+//                clients1.put(socket.getPort(), socket);
+                System.out.println("客户端"+socket.getPort()+":连接");
                 mythread c = new mythread(socket);
+                new Thread(c).start();
                 clients.add(c);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-    private void write(String str){
-        try {
-            dos.writeUTF(str);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void sendMsgToAll(Socket fromSocket, String msg,String name) {
-        Set<Integer> keset = this.clients1.keySet();
-        java.util.Iterator<Integer> iter = keset.iterator();
-
-        while(iter.hasNext()){
-            //循环，依次找出非本客户端的来
-            int key = iter.next();
-            Socket socket = clients1.get(key);
-            if(socket != fromSocket){
-                try {
-                    if(socket.isClosed() == false){
-                        if(socket.isOutputShutdown() == false){
-
-                            dos = new DataOutputStream(socket.getOutputStream());
-                            write(name);
-                            write(msg);
-                            /*Writer writer = new OutputStreamWriter(
-                                    socket.getOutputStream());
-                            writer.write(msg);
-                            writer.flush();*/
-
-                        }
-
-                    }
-                } catch (SocketException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+        }finally {
+            try {
+                ss.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
         }
     }
+
     //需要行动的，
     public void actionPerformed(ActionEvent e) {
         String temp = "";
@@ -118,10 +82,10 @@ public class Server {
         }
     }
 
+    //所有读写操作都放线程里了
     class mythread implements Runnable{
         private HashMap<String, String> mp = new HashMap<>();
         private Socket socket = null;
-        private Server server = null;
         private DataInputStream dis = null;
         private DataOutputStream dos=null;
         private String temp = null;
@@ -133,8 +97,6 @@ public class Server {
         public mythread(Socket socket) {
             bConnected=true;
             this.socket = socket;
-//            this.server = server;
-
         }
 
         private void init(){
@@ -152,12 +114,12 @@ public class Server {
         private String read(){
             try {
                 str=dis.readUTF();
-//System.out.println(temp);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return str;
         }
+
         private void write(String str){
             try {
                 dos.writeUTF(str);
@@ -166,71 +128,58 @@ public class Server {
                 e.printStackTrace();
             }
         }
-        private void checkName(){
+
+        private String checkName(){
             boolean ok=false;
             temp=read();
 //mysql设计了
             write("true");
-
+            return temp;
         }
-        private void sendToAll(String str){
-
-            write(name);
-            write(str);
+        private void close(){
+            try {
+                dos.close();
+                dis.close();
+                socket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
         @Override
         public void run() {
             init();
-            checkName();
+            //如果输错，要一直循环等待输入，且quit指令还没放入login
+            str=checkName();
+            write(str);
             System.out.println("子线程开始工作");
-            while(bConnected){
-                try {
-//                    System.out.println("线程"+this.getId()+":开始从客户端读取数据——>");
-                    //不停读取数据
-                    while ( (name=dis.readUTF())!= null) {
-                        temp=read();
-                        if(temp.length()>2){
-                            if(temp.charAt(0)=='/'&&temp.charAt(1)=='/'){
-                                str=temp.substring(2);
-                                //扩展，那么就是遇到空格自动回退的字符串切割；再者就是换行符的影响
-                                if(str.substring(0,2).equals("hi")){
-                                    if(str.length()>2){
 
-                                    }else {
-                                        write(mp.get("hi"));
-                                    }
-                                }
-                            }else if(temp.charAt(0)=='/'&&temp.charAt(1)!='/'){
+            try {
+            //不停读取数据
 
-                            }else {
+                while ( bConnected) {
+                    name=read();
+                    temp=read();
 
-                            }
-                        }else {
-                            //广播的消息
-                        }
-                        //发给所有客户端先
-                        server.sendMsgToAll(null,temp,name);
-                        System.out.println("来自客户端"+socket.getPort()+"的消息:" +temp);
-//                        server.sendMsgToAll(this.socket, "客户端"+socket.getPort()+"的说:" +temp);
+                    //发给所有客户端先
+                    for (int i = 0; i <clients.size() ; i++) {
+                        mythread c = clients.get(i);
+                        c.write(name);
+                        c.write(temp);
                     }
 
-                    //关闭死亡线程
-                    if(socket.getKeepAlive() == false){
-                        dis.close();
-                        socket.close();
-                    }
+                    System.out.println("来自客户端"+socket.getPort()+"的消息:" +temp);
+                }
+
+                //关闭死亡线程
+
                 } catch (Exception e) {
                     e.printStackTrace();
-                    try {
-                        dis.close();
-                        socket.close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
+            }finally {
+                close();
             }
         }
     }
 }
+
 
 
