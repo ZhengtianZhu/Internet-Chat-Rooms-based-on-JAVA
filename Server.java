@@ -91,6 +91,8 @@ public class Server {
         private String temp = null;
         private String str = null;
         private String name = null;
+        private String tarName = null;
+        private String sym = null;
         private boolean bConnected=false;
 
         //先记住吧，
@@ -100,15 +102,12 @@ public class Server {
         }
 
         private void init(){
-//System.out.println("init 1");
             try {
                 dis = new DataInputStream(socket.getInputStream());
                 dos = new DataOutputStream(socket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mp.put("hi","向大家打招呼，“Hi，大家好！我来咯~”");
-            mp.put("hi ", "打招呼：“Hi，你好啊~”");
         }
 
         private String read(){
@@ -148,23 +147,25 @@ public class Server {
         @Override
         public void run() {
             init();
-            //如果输错，要一直循环等待输入，且quit指令还没放入login
+            //如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
             str=checkName();
             write(str);
             System.out.println("子线程开始工作");
 
             try {
             //不停读取数据
-
-                while ( bConnected) {
+                while (bConnected) {
                     name=read();
                     temp=read();
-
+                    sym=read();
+                    tarName=read();
                     //发给所有客户端先
                     for (int i = 0; i <clients.size() ; i++) {
                         mythread c = clients.get(i);
                         c.write(name);
                         c.write(temp);
+                        c.write(sym);
+                        c.write(tarName);
                     }
 
                     System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp);

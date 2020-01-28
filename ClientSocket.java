@@ -24,6 +24,7 @@ public class ClientSocket {
     private boolean online=false;
     private String name=null;
     private String tName=null;
+    private String tarName="";
     private String str=null;
 
     public ClientSocket(){
@@ -52,7 +53,6 @@ public class ClientSocket {
                         RecvClient c=new RecvClient();
                         new Thread(c).start();
                         start();
-
                     }else {
                         System.out.println("Name exist, please choose another name.");
                     }
@@ -126,9 +126,11 @@ public class ClientSocket {
         }
     }
 
-    public void sendMsgAndName(String str){
+    public void sendMsgAndName(String str,String num){
         submit(name);
         submit(str);
+        submit(num);
+        submit(tarName);
     }
 
     public void login(){
@@ -148,6 +150,7 @@ public class ClientSocket {
             login();
             //广播的消息
             while (started){
+                tarName="";
                 str=in.nextLine();
                 if(str.length()>2){
                     if(str.charAt(0)=='/'&&str.charAt(1)=='/'){
@@ -155,20 +158,21 @@ public class ClientSocket {
                         //扩展，那么就是遇到空格自动回退的字符串切割；再者就是换行符的影响
                         if(str.substring(0,2).equals("hi")){
                             if(str.length()>2){
+                                tarName=str.substring(3);
                                 str = mp.get("hi ");
-                                sendMsgAndName(str);
+                                sendMsgAndName(str,"3");
                             }else {
                                 str=mp.get("hi");
-                                sendMsgAndName(str);
+                                sendMsgAndName(str,"2");
                             }
                         }
                     }else if(str.charAt(0)=='/'&&str.charAt(1)!='/'){
 
                     }else {
-                        sendMsgAndName(str);
+                        sendMsgAndName(str,"0");
                     }
                 }else {
-                    sendMsgAndName(str);
+                    sendMsgAndName(str,"0");
                 }
                 //否则就是广播的消息
 
@@ -191,6 +195,11 @@ public class ClientSocket {
 
     class RecvClient implements Runnable {
         private boolean Connected=false;
+        private String tName=null;
+        private String temp=null;
+        private String sym=null;
+        private String tarName="";
+
 
         public RecvClient(){
             Connected=true;
@@ -202,14 +211,40 @@ public class ClientSocket {
                     //主要负责接收服务端的
 
                 tName=receive();
-                str=receive();
-                if (tName.equals(name)) {
-                    System.out.printf("你向大家");
+                temp=receive();
+                sym=receive();
+                tarName=receive();
+
+                if(sym.equals("0")){
+                    temp="说："+temp;
+                    if (tName.equals(name)) {
+                        System.out.printf("你");
+                    }else {
+                        System.out.printf("%s",tName);
+                    }
+                }else  if(sym.equals("1")){
+
+                }else if(sym.equals("2")){// "//"无后缀
+                    if (tName.equals(name)) {
+                        System.out.printf("你");
+                    }else {
+                        System.out.printf("%s",tName);
+                    }
+                }else if(sym.equals("3")){// "//"有后缀
+                    if (tarName.equals(name)) {
+                        System.out.printf("%s向你",tName);
+                    }else if(tName.equals(name)){
+                        System.out.printf("你向%s",tarName);
+                    }else {
+                        System.out.printf("%s向%s",tName,tarName);
+                    }
                 }else {
-                    System.out.printf("%s向大家",tName);
+
                 }
+
                 //消息是统一的
-                System.out.println(str);
+                System.out.println(temp);
+                tarName="";
                 }
             } catch (Exception e) {
                 e.printStackTrace();
