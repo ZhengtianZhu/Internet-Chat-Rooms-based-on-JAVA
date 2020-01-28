@@ -35,8 +35,8 @@ public class Server {
 //                clients1.put(socket.getPort(), socket);
                 System.out.println("客户端"+socket.getPort()+":连接");
                 mythread c = new mythread(socket);
-                new Thread(c).start();
                 clients.add(c);
+                new Thread(c).start();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,7 +167,7 @@ public class Server {
                         c.write(temp);
                     }
 
-                    System.out.println("来自客户端"+socket.getPort()+"的消息:" +temp);
+                    System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp);
                 }
 
                 //关闭死亡线程

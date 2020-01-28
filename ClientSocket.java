@@ -49,7 +49,10 @@ public class ClientSocket {
 //System.out.println("init");
                     if(submitName(name)){//原本可以和下面的 submit(name);句子合并
                         online=true;//需要进入库进行查询名字，全字符匹配
+                        RecvClient c=new RecvClient();
+                        new Thread(c).start();
                         start();
+
                     }else {
                         System.out.println("Name exist, please choose another name.");
                     }
@@ -101,6 +104,7 @@ public class ClientSocket {
             str=dis.readUTF();
 //System.out.printf("2 dis %s\n",str);
         } catch (IOException e) {
+            System.out.println("receive problem");
             e.printStackTrace();
         }
         return  str;
@@ -167,8 +171,7 @@ public class ClientSocket {
                     sendMsgAndName(str);
                 }
                 //否则就是广播的消息
-                RecvClient r=new RecvClient();
-                new Thread(r).start();
+
             }
 
         } catch (Exception e) {
