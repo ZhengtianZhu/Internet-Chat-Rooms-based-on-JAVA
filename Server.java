@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.*;
 import java.util.*;
 
 //主线程监听，此线程收发消息；客户端下线，届时再说？
@@ -13,7 +14,6 @@ public class Server {
     public static void main(String[] args){
         new Server().listenClient();
     }
-    private Map<Integer, Socket> clients1 = new HashMap<Integer, Socket>();
     private List<mythread> clients=new ArrayList<>() ;
     private boolean started=false;
     private ServerSocket ss=null;
@@ -50,36 +50,56 @@ public class Server {
     }
 
     //需要行动的，
-    public void actionPerformed(ActionEvent e) {
-        String temp = "";
-        if("sendMsg".equals(e.getActionCommand())){
-            System.out.println("开始向客户端群发消息");
-            Set<Integer> keset = this.clients1.keySet();
-            java.util.Iterator<Integer> iter = keset.iterator();
-            while(iter.hasNext()){
-                int key = iter.next();
-                Socket socket = clients1.get(key);
-                try {
+    public String doSql(String name,String str){
+        String flag="false";
 
-                    if(socket.isClosed() == false){
-                        if(socket.isOutputShutdown() == false){
-                            //想客户端写东西
-                            temp = "向客户端"+socket.getPort()+"发送消息";
-                            System.out.println(temp);
-                            Writer writer = new OutputStreamWriter(
-                                    socket.getOutputStream());
-                           /* this.apppendMsg(temp);*/
-                            writer.write("来自服务器的问候");
-                            writer.flush();
-                        }
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        }catch (ClassNotFoundException cne){
+            cne.printStackTrace();
+        }
+        String dbur = "jdbc:mysql://127.0.0.1:3306/world?&useSSL=false&serverTimezone=UTC";
+        String sql = "SELECT * FROM chat";
+        Connection conn=null;
+        Statement stmt=null;
+        ResultSet rs=null;
+
+        try {
+            //管家注册
+            conn= DriverManager.getConnection(dbur,"root","1qaz2wsx");
+            stmt=conn.createStatement();
+
+            rs= stmt.executeQuery(sql);
+            while (rs.next()) {
+                if(name.equals(rs.getString(str))){
+                    sql=sql+" where name=\'"+name+"\'";
+                    rs=stmt.executeQuery(sql);rs.next();
+                    str=rs.getString("online");
+                    if(str.equals("0")){
+                        flag="true";
+                        sql="update chat set online=1 where name=\'"+name+"\'";
+                        System.out.println(sql);
+                        stmt.execute(sql);
                     }
-                } catch (SocketException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    break;
                 }
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if(rs!=null)
+                    rs.close();
+                if(stmt!=null)
+                    stmt.close();
+                if(conn!=null)
+                    conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+        return flag;
     }
 
     //所有读写操作都放线程里了
@@ -129,12 +149,15 @@ public class Server {
         }
 
         private String checkName(){
-            boolean ok=false;
-            temp=read();
+            String name=null;
+            String ok="false";
+            name=read();
+            ok=doSql(name,"name");
 //mysql设计了
-            write("true");
-            return temp;
+            write(ok);
+            return name;
         }
+
         private void close(){
             try {
                 dos.close();
@@ -144,6 +167,7 @@ public class Server {
                 e1.printStackTrace();
             }
         }
+
         @Override
         public void run() {
             init();
@@ -160,6 +184,16 @@ public class Server {
                     sym=read();
                     tarName=read();
                     //发给所有客户端先
+
+                    //命令异常，字符不对；长度不够，客户端离线解决断了
+                    if(sym.equals("1")){
+                        if(temp.equals("who")){//都是在客户端显示的
+                            //mysql数据查询了
+                        }else if(temp.substring(0,7).equals("history")){
+                            temp=temp.substring(8);
+
+                        }
+                    }
                     for (int i = 0; i <clients.size() ; i++) {
                         mythread c = clients.get(i);
                         c.write(name);
@@ -167,7 +201,6 @@ public class Server {
                         c.write(sym);
                         c.write(tarName);
                     }
-
                     System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp);
                 }
 

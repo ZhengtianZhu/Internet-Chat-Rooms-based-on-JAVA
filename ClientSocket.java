@@ -47,7 +47,6 @@ public class ClientSocket {
                 }
 
                 if(login.substring(0,6).equals("/login")){
-//System.out.println("init");
                     if(submitName(name)){//原本可以和下面的 submit(name);句子合并
                         online=true;//需要进入库进行查询名字，全字符匹配
                         RecvClient c=new RecvClient();
@@ -147,7 +146,6 @@ public class ClientSocket {
 
     public void start(){
         try {
-            login();
             //广播的消息
             while (started){
                 tarName="";
@@ -206,6 +204,7 @@ public class ClientSocket {
         }
 
         public void run(){
+            login();
             try {
             while (Connected) {
                     //主要负责接收服务端的
