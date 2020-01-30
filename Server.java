@@ -1,6 +1,5 @@
 package tk;
 
-
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.net.ServerSocket;
@@ -17,6 +16,9 @@ public class Server {
     private List<mythread> clients=new ArrayList<>() ;
     private boolean started=false;
     private ServerSocket ss=null;
+    private Connection conn=null;
+    private Statement stmt=null;
+    private ResultSet rs=null;
     public Server() {
        started=true;
     }
@@ -49,59 +51,6 @@ public class Server {
         }
     }
 
-    //需要行动的，
-    public String doSql(String name,String str){
-        String flag="false";
-
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        }catch (ClassNotFoundException cne){
-            cne.printStackTrace();
-        }
-        String dbur = "jdbc:mysql://127.0.0.1:3306/world?&useSSL=false&serverTimezone=UTC";
-        String sql = "SELECT * FROM chat";
-        Connection conn=null;
-        Statement stmt=null;
-        ResultSet rs=null;
-
-        try {
-            //管家注册
-            conn= DriverManager.getConnection(dbur,"root","1qaz2wsx");
-            stmt=conn.createStatement();
-
-            rs= stmt.executeQuery(sql);
-            while (rs.next()) {
-                if(name.equals(rs.getString(str))){
-                    sql=sql+" where name=\'"+name+"\'";
-                    rs=stmt.executeQuery(sql);rs.next();
-                    str=rs.getString("online");
-                    if(str.equals("0")){
-                        flag="true";
-                        sql="update chat set online=1 where name=\'"+name+"\'";
-                        System.out.println(sql);
-                        stmt.execute(sql);
-                    }
-                    break;
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            try {
-                if(rs!=null)
-                    rs.close();
-                if(stmt!=null)
-                    stmt.close();
-                if(conn!=null)
-                    conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return flag;
-    }
-
     //所有读写操作都放线程里了
     class mythread implements Runnable{
         private HashMap<String, String> mp = new HashMap<>();
@@ -116,7 +65,7 @@ public class Server {
         private boolean bConnected=false;
 
         //先记住吧，
-        public mythread(Socket socket) {
+        private mythread(Socket socket) {
             bConnected=true;
             this.socket = socket;
         }
@@ -147,7 +96,81 @@ public class Server {
                 e.printStackTrace();
             }
         }
+        private void initSql(){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            }catch (ClassNotFoundException cne){
+                cne.printStackTrace();
+            }
+            String dbur = "jdbc:mysql://127.0.0.1:3306/world?&useSSL=false&serverTimezone=UTC";
+            try {
+                conn= DriverManager.getConnection(dbur,"root","1qaz2wsx");
+                stmt=conn.createStatement();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        //需要行动的，
+        private String doSql(String name,String sqlStr){//name是拆除后的，sqlStr用来指示好了
+            initSql();
+            String flag="false";
+            String sql = "SELECT * FROM chat";
+            int num=0;
+            try {
+                //管家注册
+                rs= stmt.executeQuery(sql);
+                if(sqlStr.equals("quit")){
+                    sql="update chat set online=0 where name=\'"+name+"\'";
+                    stmt.execute(sql);
+                }else {
+                    while (rs.next()) {//全部查一遍，经常操作，用个标志位来
+                        if(sqlStr.equals("who")){
+                            num++;
+                            System.out.println(rs.getString("name"));//who，客户端显示的话就
+                        }
 
+                        if(sqlStr.equals("name")){
+                            if(name.equals(rs.getString(sqlStr))){
+                                sql=sql+" where name=\'"+name+"\'";
+                                rs=stmt.executeQuery(sql);rs.next();
+                                sqlStr=rs.getString("online");
+                                if(sqlStr.equals("0")){
+                                    flag="true";
+                                /*sql="update chat set online=1 where name=\'"+name+"\'";
+                                System.out.println(sql);
+                                stmt.execute(sql);*/
+                                }
+                                break;
+                            }
+                        }
+                        //name
+
+                    }
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                closeSql();
+            }
+            if(sqlStr.equals("who")) {
+                System.out.printf("Total online user: %d\n",num);
+            }
+            return flag;
+        }
+
+        private void closeSql(){
+            try {
+                if(rs!=null)
+                    rs.close();
+                if(stmt!=null)
+                    stmt.close();
+                if(conn!=null)
+                    conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         private String checkName(){
             String name=null;
             String ok="false";
@@ -187,29 +210,38 @@ public class Server {
 
                     //命令异常，字符不对；长度不够，客户端离线解决断了
                     if(sym.equals("1")){
-                        if(temp.equals("who")){//都是在客户端显示的
+                        if(temp.substring(0,2).equals("to")){
+                            //用户名不带空格，且必须英文字符，否则
+                            
+                        }else if(temp.equals("who")){//都是在客户端显示的
+                            doSql(null,"who");
                             //mysql数据查询了
+                        }else if(temp.equals("quit")){
+                            doSql(name,"quit");
+                            clients.remove(this);
                         }else if(temp.substring(0,7).equals("history")){
                             temp=temp.substring(8);
-
                         }
                     }
-                    for (int i = 0; i <clients.size() ; i++) {
-                        mythread c = clients.get(i);
-                        c.write(name);
-                        c.write(temp);
-                        c.write(sym);
-                        c.write(tarName);
-                    }
+
+                    spread();
                     System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp);
                 }
-
                 //关闭死亡线程
-
                 } catch (Exception e) {
                     e.printStackTrace();
             }finally {
                 close();
+            }
+        }
+
+        private void spread(){
+            for (int i = 0; i <clients.size() ; i++) {
+                mythread c = clients.get(i);
+                c.write(name);
+                c.write(temp);
+                c.write(sym);
+                c.write(tarName);
             }
         }
     }

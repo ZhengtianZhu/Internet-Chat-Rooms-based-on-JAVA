@@ -36,8 +36,8 @@ public class ClientSocket {
         init();
         System.out.printf("Please login\n");
         in = new Scanner(System.in);
-        login =in.nextLine();
-
+//        login =in.nextLine();
+        login="/login a";
         while (!login.equals("/quit")&&!online){
             if(login.length()>=7){//首先名字长度得有
                 try {
@@ -102,6 +102,8 @@ public class ClientSocket {
         try {
             str=dis.readUTF();
 //System.out.printf("2 dis %s\n",str);
+        }catch (EOFException e) {
+            System.out.println("normal exit");
         } catch (IOException e) {
             System.out.println("receive problem");
             e.printStackTrace();
@@ -165,7 +167,8 @@ public class ClientSocket {
                             }
                         }
                     }else if(str.charAt(0)=='/'&&str.charAt(1)!='/'){
-
+                        str=str.substring(1);
+                        sendMsgAndName(str,"1");
                     }else {
                         sendMsgAndName(str,"0");
                     }
@@ -173,9 +176,7 @@ public class ClientSocket {
                     sendMsgAndName(str,"0");
                 }
                 //否则就是广播的消息
-
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,7 +199,6 @@ public class ClientSocket {
         private String sym=null;
         private String tarName="";
 
-
         public RecvClient(){
             Connected=true;
         }
@@ -209,10 +209,11 @@ public class ClientSocket {
             while (Connected) {
                     //主要负责接收服务端的
 
-                tName=receive();
-                temp=receive();
-                sym=receive();
-                tarName=receive();
+
+                    tName=receive();
+                    temp=receive();
+                    sym=receive();
+                    tarName=receive();
 
                 if(sym.equals("0")){
                     temp="说："+temp;
@@ -222,7 +223,14 @@ public class ClientSocket {
                         System.out.printf("%s",tName);
                     }
                 }else  if(sym.equals("1")){
-
+                    if(temp.equals("quit")){
+                        if (!tName.equals(name)) {
+                            temp=tName+" has quit.";
+                        }else {
+                            close();
+                            System.exit(0);
+                        }
+                    }
                 }else if(sym.equals("2")){// "//"无后缀
                     if (tName.equals(name)) {
                         System.out.printf("你");
