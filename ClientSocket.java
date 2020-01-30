@@ -7,7 +7,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Scanner;
-
+/*
+input() login里面有东西的
+* */
 public class ClientSocket {
     public static void main(String[] args) {
        new ClientSocket().input();
@@ -36,8 +38,8 @@ public class ClientSocket {
         init();
         System.out.printf("Please login\n");
         in = new Scanner(System.in);
-//        login =in.nextLine();
-        login="/login a";
+        login =in.nextLine();
+//        login="/login a";
         while (!login.equals("/quit")&&!online){
             if(login.length()>=7){//首先名字长度得有
                 try {
@@ -102,6 +104,8 @@ public class ClientSocket {
         try {
             str=dis.readUTF();
 //System.out.printf("2 dis %s\n",str);
+        }catch (SocketException e) {
+            System.out.println("退出了，bye!");
         }catch (EOFException e) {
             System.out.println("normal exit");
         } catch (IOException e) {
@@ -168,7 +172,11 @@ public class ClientSocket {
                         }
                     }else if(str.charAt(0)=='/'&&str.charAt(1)!='/'){
                         str=str.substring(1);
+                        System.out.println(str);
                         sendMsgAndName(str,"1");
+                        if(str.equals("quit")){
+                            break;
+                        }
                     }else {
                         sendMsgAndName(str,"0");
                     }
@@ -208,13 +216,10 @@ public class ClientSocket {
             try {
             while (Connected) {
                     //主要负责接收服务端的
-
-
                     tName=receive();
                     temp=receive();
                     sym=receive();
                     tarName=receive();
-
                 if(sym.equals("0")){
                     temp="说："+temp;
                     if (tName.equals(name)) {
@@ -223,14 +228,18 @@ public class ClientSocket {
                         System.out.printf("%s",tName);
                     }
                 }else  if(sym.equals("1")){
+
                     if(temp.equals("quit")){
                         if (!tName.equals(name)) {
                             temp=tName+" has quit.";
                         }else {
                             close();
                             System.exit(0);
+                            Connected=false;
+                            break;
                         }
                     }
+                        //用户名不带空格，且必须英文字符，否则
                 }else if(sym.equals("2")){// "//"无后缀
                     if (tName.equals(name)) {
                         System.out.printf("你");
@@ -245,13 +254,30 @@ public class ClientSocket {
                     }else {
                         System.out.printf("%s向%s",tName,tarName);
                     }
-                }else {
-
+                }else if(sym.equals("4")){//缺乏不在线处理
+                    if(name.equals(tName)){//发送主角
+                        temp="你对"+tarName+"说："+temp;
+                        System.out.println(temp);
+                    } else if (tName.equals(tarName)) {//接收方
+                        temp=name+"对你说："+temp;
+                        System.out.println(temp);
+                    }
+                }else if(sym.equals("5")){
+                    if (name.equals(tName)) {
+                        System.out.println(temp);
+                    }
+                    sym="4";
                 }
 
                 //消息是统一的
-                System.out.println(temp);
+                if(!sym.equals("4")){
+                    System.out.println(temp);
+                }
+
                 tarName="";
+                tName="";
+                temp="";
+                sym="";
                 }
             } catch (Exception e) {
                 e.printStackTrace();

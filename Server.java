@@ -111,7 +111,7 @@ public class Server {
             }
         }
         //需要行动的，
-        private String doSql(String name,String sqlStr){//name是拆除后的，sqlStr用来指示好了
+        private String doSql(String name,String sqlStr,String opt){//name是拆除后的，sqlStr用来指示好了
             initSql();
             String flag="false";
             String sql = "SELECT * FROM chat";
@@ -136,9 +136,12 @@ public class Server {
                                 sqlStr=rs.getString("online");
                                 if(sqlStr.equals("0")){
                                     flag="true";
-                                /*sql="update chat set online=1 where name=\'"+name+"\'";
-                                System.out.println(sql);
-                                stmt.execute(sql);*/
+                                    if(opt.equals("login")){
+                                        sql="update chat set online=1 where name=\'"+name+"\'";
+                                        System.out.println(sql);
+                                        stmt.execute(sql);
+                                    }
+
                                 }
                                 break;
                             }
@@ -175,7 +178,7 @@ public class Server {
             String name=null;
             String ok="false";
             name=read();
-            ok=doSql(name,"name");
+            ok=doSql(name,"name","login");
 //mysql设计了
             write(ok);
             return name;
@@ -212,13 +215,30 @@ public class Server {
                     if(sym.equals("1")){
                         if(temp.substring(0,2).equals("to")){
                             //用户名不带空格，且必须英文字符，否则
-                            
+                            int mark=0;
+                            for (int i = 3; i <temp.length() ; i++) {
+                                if(temp.charAt(i)==' '){
+                                    mark=i;break;
+                                }
+                            }
+
+                            tarName=temp.substring(3,mark);
+//    System.out.println(mark+" name "+tarName);
+                            if(!doSql(tarName,"name","").equals("true")){//不在线的考虑呢？
+                                sym="5"; temp=tarName+" is not online.";
+                            }else {
+                                sym="4";//仅有的人可以显示
+                                temp=temp.substring(mark+1);
+                            }
                         }else if(temp.equals("who")){//都是在客户端显示的
-                            doSql(null,"who");
+                            doSql(null,"who","");
                             //mysql数据查询了
+                            sym="4";//假设了下
                         }else if(temp.equals("quit")){
-                            doSql(name,"quit");
+                            doSql(name,"quit","");
                             clients.remove(this);
+                            bConnected=false;
+                            break;
                         }else if(temp.substring(0,7).equals("history")){
                             temp=temp.substring(8);
                         }
