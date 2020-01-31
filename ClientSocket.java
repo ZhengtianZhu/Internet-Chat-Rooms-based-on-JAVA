@@ -38,8 +38,8 @@ public class ClientSocket {
         init();
         System.out.printf("Please login\n");
         in = new Scanner(System.in);
-        login =in.nextLine();
-//        login="/login a";
+//        login =in.nextLine();
+        login="/login a";
         while (!login.equals("/quit")&&!online){
             if(login.length()>=7){//首先名字长度得有
                 try {
@@ -172,7 +172,7 @@ public class ClientSocket {
                         }
                     }else if(str.charAt(0)=='/'&&str.charAt(1)!='/'){
                         str=str.substring(1);
-                        System.out.println(str);
+    System.out.println(str);
                         sendMsgAndName(str,"1");
                         if(str.equals("quit")){
                             break;
@@ -254,7 +254,7 @@ public class ClientSocket {
                     }else {
                         System.out.printf("%s向%s",tName,tarName);
                     }
-                }else if(sym.equals("4")){//缺乏不在线处理
+                }else if(sym.equals("4")){
                     if(name.equals(tName)){//发送主角
                         temp="你对"+tarName+"说："+temp;
                         System.out.println(temp);
@@ -279,7 +279,9 @@ public class ClientSocket {
                 temp="";
                 sym="";
                 }
-            } catch (Exception e) {
+            }catch (NullPointerException e){
+                System.out.println("null string");
+            }catch (Exception e) {
                 e.printStackTrace();
             }
         }

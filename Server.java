@@ -132,11 +132,17 @@ public class Server {
                         if(sqlStr.equals("name")){
                             if(name.equals(rs.getString(sqlStr))){
                                 sql=sql+" where name=\'"+name+"\'";
+                System.out.println("inside the sql "+sql);
                                 rs=stmt.executeQuery(sql);rs.next();
                                 sqlStr=rs.getString("online");
-                                if(sqlStr.equals("0")){
-                                    flag="true";
-                                    if(opt.equals("login")){
+                                if(opt.equals("check")){
+                                    if(sqlStr.equals("1")){
+                                        flag="true";
+                                    }
+                                }
+                                if(opt.equals("login")){
+                                    if(sqlStr.equals("0")){
+                                        flag="true";
                                         sql="update chat set online=1 where name=\'"+name+"\'";
                                         System.out.println(sql);
                                         stmt.execute(sql);
@@ -223,8 +229,8 @@ public class Server {
                             }
 
                             tarName=temp.substring(3,mark);
-//    System.out.println(mark+" name "+tarName);
-                            if(!doSql(tarName,"name","").equals("true")){//不在线的考虑呢？
+    System.out.println(mark+" name "+tarName);
+                            if(doSql(tarName,"name","check").equals("false")){
                                 sym="5"; temp=tarName+" is not online.";
                             }else {
                                 sym="4";//仅有的人可以显示
@@ -245,7 +251,7 @@ public class Server {
                     }
 
                     spread();
-                    System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp);
+                    System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp+" sym is "+sym);
                 }
                 //关闭死亡线程
                 } catch (Exception e) {
