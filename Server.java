@@ -16,9 +16,7 @@ public class Server {
     private List<mythread> clients=new ArrayList<>() ;
     private boolean started=false;
     private ServerSocket ss=null;
-    private Connection conn=null;
-    private Statement stmt=null;
-    private ResultSet rs=null;
+
     public Server() {
        started=true;
     }
@@ -53,6 +51,10 @@ public class Server {
 
     //所有读写操作都放线程里了
     class mythread implements Runnable{
+        private Connection conn=null;
+        private Statement stmt=null;
+        private ResultSet rs=null;
+
         private HashMap<String, String> mp = new HashMap<>();
         private Socket socket = null;
         private DataInputStream dis = null;
@@ -64,7 +66,7 @@ public class Server {
         private String sym = null;
         private boolean bConnected=false;
 
-        //先记住吧，
+
         private mythread(Socket socket) {
             bConnected=true;
             this.socket = socket;
@@ -87,7 +89,15 @@ public class Server {
             }
             return str;
         }
-
+        private boolean readBool(){
+            boolean ok=false;
+            try {
+                ok=dis.readBoolean();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ok ;
+        }
         private void write(String str){
             try {
                 dos.writeUTF(str);
@@ -112,6 +122,8 @@ public class Server {
         }
         //需要行动的，
         private String doSql(String name,String sqlStr,String opt){//name是拆除后的，sqlStr用来指示好了
+            /*原本name就是真实名字，sqlStr可以当做查询的功能模块，有时当做其他功能选择模块，用于if判断；
+            * opt是由于/to私聊时代的到来而进一步发展的，主要用于更进一步的选择*/
             initSql();
             String flag="false";
             String sql = "SELECT * FROM chat";
@@ -132,7 +144,7 @@ public class Server {
                         if(sqlStr.equals("name")){
                             if(name.equals(rs.getString(sqlStr))){
                                 sql=sql+" where name=\'"+name+"\'";
-                System.out.println("inside the sql "+sql);
+//                System.out.println("inside the sql "+sql);
                                 rs=stmt.executeQuery(sql);rs.next();
                                 sqlStr=rs.getString("online");
                                 if(opt.equals("check")){
@@ -144,7 +156,7 @@ public class Server {
                                     if(sqlStr.equals("0")){
                                         flag="true";
                                         sql="update chat set online=1 where name=\'"+name+"\'";
-                                        System.out.println(sql);
+//                            System.out.println(sql);
                                         stmt.execute(sql);
                                     }
 
@@ -199,12 +211,27 @@ public class Server {
                 e1.printStackTrace();
             }
         }
+        private int countSpace(int start,String temp){
+            int mark=0;
+            for (int i = start; i <temp.length() ; i++) {
+                if(temp.charAt(i)==' '){
+                    mark=i;break;
+                }
+            }
+            return mark;
+        }
 
         @Override
         public void run() {
+            String str="";
+            boolean ok=false;
             init();
             //如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
-            str=checkName();
+
+            while (!ok){
+                str=checkName();
+                ok=readBool();
+            }
             write(str);
             System.out.println("子线程开始工作");
 
@@ -216,20 +243,13 @@ public class Server {
                     sym=read();
                     tarName=read();
                     //发给所有客户端先
-
                     //命令异常，字符不对；长度不够，客户端离线解决断了
                     if(sym.equals("1")){
                         if(temp.substring(0,2).equals("to")){
                             //用户名不带空格，且必须英文字符，否则
-                            int mark=0;
-                            for (int i = 3; i <temp.length() ; i++) {
-                                if(temp.charAt(i)==' '){
-                                    mark=i;break;
-                                }
-                            }
-
+                            int mark=countSpace(3,temp);
                             tarName=temp.substring(3,mark);
-    System.out.println(mark+" name "+tarName);
+//    System.out.println(mark+" name "+tarName);
                             if(doSql(tarName,"name","check").equals("false")){
                                 sym="5"; temp=tarName+" is not online.";
                             }else {
@@ -244,12 +264,21 @@ public class Server {
                             doSql(name,"quit","");
                             clients.remove(this);
                             bConnected=false;
-                            break;
                         }else if(temp.substring(0,7).equals("history")){
-                            temp=temp.substring(8);
+                            if(temp.length()>7){
+                                temp=temp.substring(8);
+                            System.out.println("1 "+temp);
+                                int mark=countSpace(0,temp);
+                            System.out.println("mark "+mark);
+                                tarName=temp.substring(mark+1);
+                                temp=temp.substring(0,mark);
+                                sym="7";
+                            }else {
+                                sym="6";
+                            }
+
                         }
                     }
-
                     spread();
                     System.out.println(clients.size()+"来自客户端"+socket.getPort()+"的消息:" +temp+" sym is "+sym);
                 }
