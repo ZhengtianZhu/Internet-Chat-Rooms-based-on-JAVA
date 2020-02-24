@@ -1,0 +1,86 @@
+实现一个简单的聊天室的功能，命令行的用户界面。
+Client端和Server端之间的通信有三类：
+
+广播消息，比如hi every one，不以/开头的任何字符串，当做广播消息转发给在线的其他用户。
+执行命令，比如/login xxx，以/单个斜线开头，表示执行某个功能，后面可以跟参数。
+预设消息，比如//smile，以//两个斜线开头，就发一个类似xxx脸上泛起无邪的笑容这样预设的消息给其他人。
+
+主要的过程及说明：
+
+
+Client用TCP连接Server，端口是12345。
+连接成功之后，给Client显示Please login。
+
+
+/login user_name
+
+登录命令，为简单起见，不要密码，只需要用户名。
+这是建立连接后的第一个命令，如果输入任何其他的，都要报错：Invalid command。
+如果当前服务器上有同名的人在线，那么这个命令返回错误消息：Name exist, please choose anthoer name.。
+如果一切正常，返回信息：You have logined，并广播其他人：user_name has logined。
+在未登录状态下，除了/login，另外一个可以允许的命令是/quit，断掉连接并退出客户端程序。
+
+
+
+今天谁请吃饭来着？
+
+不带斜杠的，就是广播消息，发送给所有人。
+自己看到：你说：今天谁请吃饭来着？
+
+其他人看到：user_name说：今天谁请吃饭来着？
+
+
+
+
+//hi [user_name]
+
+如果没有user_name的参数，就广播这样的信息：
+
+你自己看到：你向大家打招呼，“Hi，大家好！我来咯~”。
+其他人看到：user_name向大家打招呼，“Hi，大家好！我来咯~”。
+
+
+如果有user_name的参数，就广播这样的信息：
+
+你自己看到：你向user_name打招呼：“Hi，你好啊~”。
+对方看到：user_name向你打招呼：“Hi，你好啊~”。
+其他人看到：user_name1向user_name2打招呼：“Hi，你好啊~”。
+
+
+
+[user_name]中的方括号表示这个参数是可选的，并不是说user_name要用放括号括起来，其他命令中的方括号也都是一样的，表示可选。
+学员可以自己定义更多的预设消息，这个是发挥娱乐精神的地方，Hava fun!
+
+
+
+/to user_name how are you? let’s do a private talk.
+
+私聊，向系统中某个人单独发消息。
+自己看到显示：你对user_name说：how are you? let’s do a private talk.。
+
+how are you? let’s do a private talk.是举例，可以发送任意消息，不是说私聊只能互相发这一句话。
+对方显示：user_name对你说：how are you? let’s do a private talk.。
+如果user_name不存在，就显示：user_name is not online.
+
+如果user_name是用户自己，就显示：Stop talking to yourself!。
+
+
+
+/who
+查询当前系统中都有那些用户，列出用户名，一人一行，并在最后一行显示总人数：Total online user: 15。
+
+
+/history [start_index max_count]
+
+查看历史消息记录，显示的历史记录需要在每一条前面有自己的编号。
+不加参数就默认显示按时间顺序的最近50条。
+加参数就按时间顺序显示从start_index这一条开始，向后max_count条记录。
+
+
+
+/quit
+
+退出系统，发广播给其他人：user_name has quit.
+
+断开连接，并退出客户端程序。
+用户没有登录时，也可以退出，详细见上面/login的部分。
