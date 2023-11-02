@@ -20,18 +20,7 @@ client通过多线程创建新的客户端
 /to means talk privately
 
 
-中英文夹杂：
-多线程实现Server和Client的收发同步：
-Symbol means 标志位-num,来标识不同功能，即题目中“/"要求的功能
-Server主循环接收Client的Socket连接，server will use multi threads to connect each Client.
-Client启动的客户端，依据题目需要来运行程序；
-client通过多线程创建新的客户端
 
-<div style="display:none">
-The server and clients can run on different computers in the same network, e.g. Local Area Network (LAN).
-There can be multiple clients connect to a server and they can chat to each other, just like in a chat room where everyone can see other users’ messages. There’s no private chat between two users, for simplicity.
-
-</div>
 
 
 
