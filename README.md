@@ -17,6 +17,8 @@ Server主循环接收Client的Socket连接， the server will use multiple threa
 Client启动的客户端，依据题目需要来运行程序；
 client通过多线程创建新的客户端
 
+
+
 中英文夹杂：
 多线程实现Server和Client的收发同步：
 Symbol means 标志位-num,来标识不同功能，即题目中“/"要求的功能
