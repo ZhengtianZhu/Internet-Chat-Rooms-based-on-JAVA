@@ -8,7 +8,7 @@ Maybe I need to initialize something to start some other functions, anyway.
 1. Overview of the Java Chat Application
 The Java Chat application I am going to build is a console application that is launched from the command line. I use MySQL to store the client login information, and the server will participate in each function. Besides, each meassage will be processed by the server. 
 
-3. the programme runs in the console in the same computer
+2. The programme runs in the console in the same computer.
 
 多线程实现Server和Client的收发同步：
 A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
