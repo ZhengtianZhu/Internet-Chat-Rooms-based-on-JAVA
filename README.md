@@ -25,7 +25,9 @@ Requirement list:
 /to (client N, +message): meaning two clients talk privately. For example, client A starts the message "/to B I want to date with you", then the message will send to the client B, and it will receive the message " A: I want to date with you".
 
 quit: the client go offline.
+
 history:
+
 who: calculate the total number of the online clients.
 
 
