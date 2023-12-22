@@ -19,12 +19,18 @@ client通过多线程创建新的客户端
 Requirement list: 
 
 /login: If it is the first time that the client logins, then the client will register its information, otherwise the server will check whether the login information of the client is right.
+*login.length()>=7)//首先名字长度得有, it must be larger than 7
+
+我的设计理念：上线了，构造函数自动给client 赋值生命Connected=true;
+该属性随着client的quit()消失而消失；
 
 /to : meaning broadcast the message to all other clients.
 
 /to (client N, +message): meaning two clients talk privately. For example, client A starts the message "/to B I want to date with you", then the message will send to the client B, and it will receive the message " A: I want to date with you".
 
-quit: the client go offline.
+/quit: the client go offline.
+
+
 
 history:
 
