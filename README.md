@@ -58,6 +58,7 @@ https://reintech.io/blog/java-network-programming-creating-managing-sockets
 
 原理解释：
 从连接上，TCP/IP established, then the client write DataStream into the buff; Server 端的accept方法一直到客户端启动并向服务器发出请求为止一直在等待。但注意，此方法不支持多个客户端同时访问 simultaneously. //据说，即使server不accpet(), TCP has established. There is data transmitting.
+Java这里是怎么捕获client的socket的，为啥不会捕获错误？如何识别client1和client2，咱的client port设置的不都是一样的？多线程的client怎么标记的呢？
 
 1. 函数原型
 accept函数允许在套接字上进行传入连接尝试。
