@@ -1,5 +1,7 @@
 # 2022-10-31
 
+注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（估计不行），有需要的自行查阅资料。
+
 As for the Client,
 symbol means different function.
 I use the sql to process the data of the string.
@@ -36,6 +38,16 @@ history:
 
 who: calculate the total number of the online clients.
 
+
+SOCKET：
+3.1. What Is “Connection Timed Out”?
+For establishing a connection to the server from the client-side, the socket constructor is invoked, which instantiates a socket object. The constructor takes the remote host address and the port number as input arguments. After that, it attempts to establish a connection to the remote host based on the given parameters.
+
+The operation blocks all other processes until a successful connection is made. However, if the connection isn’t successful after a certain time, the program throws a ConnectionException with a “Connection timed out” message:
+
+https://www.baeldung.com/java-socket-connection-read-timeout
+
+time_out is made by JAVA
 
 
 
