@@ -52,6 +52,8 @@ https://www.baeldung.com/java-socket-connection-read-timeout
 
 time_out is made by JAVA
 
+https://reintech.io/blog/java-network-programming-creating-managing-sockets
+
 
 
 
