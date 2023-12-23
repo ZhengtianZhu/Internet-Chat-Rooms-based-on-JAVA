@@ -54,6 +54,8 @@ time_out is made by JAVA
 
 https://reintech.io/blog/java-network-programming-creating-managing-sockets
 
+我更是按照视频，做了逻辑字段的处理，主要的代码，都还是借鉴尚硅谷的旧版视频的；
+
 
 
 
