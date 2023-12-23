@@ -56,6 +56,11 @@ https://reintech.io/blog/java-network-programming-creating-managing-sockets
 
 我更是按照视频，做了逻辑字段的处理，主要的代码，都还是借鉴尚硅谷的旧版视频的；
 
+原理解释：
+从连接上，TCP/IP established, then the client write DataStream into the buff; Server 端的accept方法一直到客户端启动并向服务器发出请求为止一直在等待。但注意，此方法不支持多个客户端同时访问 simultaneously. //据说，即使server不accpet(), TCP has established. There is data transmitting.
+We use the socket to locate each client;
+We have a list to accomdate clients 
+
 
 
 
