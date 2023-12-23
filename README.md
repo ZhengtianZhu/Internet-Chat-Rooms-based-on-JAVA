@@ -2,6 +2,9 @@
 
 注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（估计不行），有需要的自行查阅资料。
 
+Run the server first and then the client. The client should receive the "" message from the server and display it on the console.
+We have two files including Server.java and Client.java
+
 As for the Client,
 symbol means different function.
 I use the sql to process the data of the string.
