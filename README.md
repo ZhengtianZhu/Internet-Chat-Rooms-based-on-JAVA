@@ -58,6 +58,24 @@ https://reintech.io/blog/java-network-programming-creating-managing-sockets
 
 原理解释：
 从连接上，TCP/IP established, then the client write DataStream into the buff; Server 端的accept方法一直到客户端启动并向服务器发出请求为止一直在等待。但注意，此方法不支持多个客户端同时访问 simultaneously. //据说，即使server不accpet(), TCP has established. There is data transmitting.
+
+1. 函数原型
+accept函数允许在套接字上进行传入连接尝试。
+
+SOCKET WSAAPI accept(
+  SOCKET   s,
+  sockaddr *addr,
+  int      *addrlen
+);
+
+listen监听客户端来的链接，accept将客户端的信息绑定到一个socket上，也就是给客户端创建一个socket，通过返回值返回给我们客户端的socket。//这里提到的是，信息绑定
+
+一次只能创建一个，有几个客户端链接，就要调用几次。
+————————————————
+版权声明：本文为CSDN博主「超级D洋葱」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/u014779536/article/details/115834445
+
+
 We use the socket to locate each client;
 We have a list to accomdate clients 
 
