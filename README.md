@@ -97,6 +97,31 @@ dos = new DataOutputStream(socket.getOutputStream());
 We use bConnected to judge whether a thread is alive at present.
 
 
+JDBC连接：
+一：JDBC
+
+ sun：提供了一套通用性的接口：可以连接任何的数据库： 
+ 连接数据库的具体得到实例，具体的数据库厂商实现的。 
+ 
+ 连接数据的步骤（别忘了复制jar包）:( 
+ 1）注册驱动： Class.forName（）：DriverManager 
+ （2）获得链接对象：Connection 
+ （3）创建sql容器：语句： 
+ （4）执行sql语句:: stmt
+ （5）查询操作：遍历结果集：ResultSet 
+ （6）关闭资源： 
+
+
+ 如果是软编码的话步骤如下：
+
+1个方言文件内容：
+————————————————
+版权声明：本文为CSDN博主「东方-教育技术博主」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_41517071/article/details/84615765
+
+
+
+
 
 
 
