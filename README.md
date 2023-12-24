@@ -1,4 +1,5 @@
 # 2022-10-31
+考研比如2022年12月考完，2023年3月初试，几个月的时间，不太需要本科毕业生做这么高难度的、功能完善的事儿。
 
 注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（估计不行），有需要的自行查阅资料。
 
@@ -8,12 +9,12 @@ We have two files including Server.java and Client.java
 As for the Client,
 symbol means different function.
 I use the sql to process the data of the string.
-Maybe I need to initialize something to start some other functions, anyway.
+~~Maybe I need to initialize something to start some other functions, anyway.~~
 
 1. Overview of the Java Chat Application
 The Java Chat application I am going to build is a console application that is launched from the command line. I use MySQL to store the client login information, and the server will participate in each function. Besides, each meassage will be processed by the server. 
 
-2. The programme runs in the console in the same computer.
+2. The program runs in the console in the same computer.
 
 多线程实现Server和Client的收发同步：
 A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
@@ -21,13 +22,21 @@ Server主循环接收Client的Socket连接， the server will use multiple threa
 Client启动的客户端，依据题目需要来运行程序；
 client通过多线程创建新的客户端
 
-Requirement list: 
+Requirements list: 
+
+消息都是以空格隔开的，所以我这里用readUTF()来读一行行消息
+eg. Bob hi 1 Alice,
+"Bob" is the message sender, "hi" is the message,"1" means to ,"Alice" means the target receiver.
+For the client "Alice", "hi" should appear on her console screen.
 
 /login: If it is the first time that the client logins, then the client will register its information, otherwise the server will check whether the login information of the client is right.
-*login.length()>=7)//首先名字长度得有, it must be larger than 7; there is no need to input the password, because this program does not have this function.
+*login.length()>=7)//首先名字长度得有, it must be larger than 7; there is no need to input the password, because this program does not have this function. 
+//如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
+
 
 我的设计理念：上线了，构造函数自动给client 赋值生命Connected=true;
 该属性随着client的quit()消失而消失；
+查询client是否在线，则每次都去数据库里看看当前client是Online or quit；
 
 /to : meaning broadcast the message to all other clients.
 
@@ -35,12 +44,11 @@ Requirement list:
 
 /quit: the client go offline.
 
-
-
-history:
+/history:
 
 who: calculate the total number of the online clients.
 
+每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
 
 SOCKET：
 3.1. What Is “Connection Timed Out”?
@@ -79,6 +87,15 @@ listen监听客户端来的链接，accept将客户端的信息绑定到一个so
 
 We use the socket to locate each client;
 We have a list to accomdate clients 
+jdbc connects the local database to store the status of the client, like whether the client is online or has quitted.
+
+For the server,      
+we use the following methods to read and write for the data stream.
+dis = new DataInputStream(socket.getInputStream());            
+dos = new DataOutputStream(socket.getOutputStream());
+
+We use bConnected to judge whether a thread is alive at present.
+
 
 
 
