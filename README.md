@@ -1,12 +1,17 @@
 # 2022-10-31
 考研比如2022年12月考完，2023年3月初试，几个月的时间，不太需要本科毕业生做这么高难度的、功能完善的事儿。
 
-注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（估计不行），有需要的自行查阅资料。
+注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（），有需要的自行查阅资料。
+
+For the sake of simplicity, we’ll run our client and server programs on the same computer. If we were to execute them on different networked computers, the only thing that would change is the IP address. In this case, we’ll use localhost on 127.0.0.1.
+https://www.baeldung.com/a-guide-to-java-sockets#:~:text=Socket%20clientSocket%20%3D%20serverSocket.accept%20%28%29%3B%20When%20the%20server,everything%20goes%20well%2C%20the%20server%20accepts%20the%20connection.
+
+# How to Run the application
 
 Run the server first and then the client. The client should receive the "" message from the server and display it on the console.
 We have two files including Server.java and Client.java
 
-As for the Client,
+## As for the Client,
 symbol means different function.
 I use the sql to process the data of the string.
 ~~Maybe I need to initialize something to start some other functions, anyway.~~
@@ -22,7 +27,7 @@ Server主循环接收Client的Socket连接， the server will use multiple threa
 Client启动的客户端，依据题目需要来运行程序；
 client通过多线程创建新的客户端
 
-Requirements list: 
+# Requirements list: 
 
 消息都是以空格隔开的，所以我这里用readUTF()来读一行行消息
 eg. Bob hi 1 Alice,
@@ -48,9 +53,10 @@ For the client "Alice", "hi" should appear on her console screen.
 
 who: calculate the total number of the online clients.
 
+# My design
 每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
 
-SOCKET：
+## SOCKET：
 3.1. What Is “Connection Timed Out”?
 For establishing a connection to the server from the client-side, the socket constructor is invoked, which instantiates a socket object. The constructor takes the remote host address and the port number as input arguments. After that, it attempts to establish a connection to the remote host based on the given parameters.
 
@@ -96,8 +102,7 @@ dos = new DataOutputStream(socket.getOutputStream());
 
 We use bConnected to judge whether a thread is alive at present.
 
-
-JDBC连接：
+## JDBC连接
 一：JDBC
 
  sun：提供了一套通用性的接口：可以连接任何的数据库： 
