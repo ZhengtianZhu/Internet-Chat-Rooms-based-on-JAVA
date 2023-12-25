@@ -126,7 +126,7 @@ Server and client all need to connect to the database. They all need to register
 版权声明：本文为CSDN博主「东方-教育技术博主」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/qq_41517071/article/details/84615765
 # 搜狐北京 运维开发校招面试
-4. Read Timed Out
+4. Read Timed Out  <br>
 4.1. What Is “Read Timed Out”?
 The read() method call in the InputStream blocks until it finishes reading data bytes from the socket. The operation waits until it reads at least one data byte from the socket. However, if the method doesn’t return anything after an unspecified time, it throws an InterrupedIOException with a “Read timed out” error message:
 
