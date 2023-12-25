@@ -37,7 +37,7 @@ We have two files including Server.java and Client.java
 *  Client启动的客户端，依据题目需要来运行程序；Client通过多线程创建新的客户端
 
 
-## For the server,      
+## As for the server,      
 * We have a list to accomdate clients 
 * jdbc connects the local database to store the status of the client, like whether the client is online or has quitted.
 * Server主循环接收Client的Socket连接， the server will use multiple threads to connect each Client.
@@ -83,12 +83,12 @@ For establishing a connection to the server from the client-side, the socket con
 
 The operation blocks all other processes until a successful connection is made. However, if the connection isn’t successful after a certain time, the program throws a ConnectionException with a “Connection timed out” message:
 
-https://www.baeldung.com/java-socket-connection-read-timeout
+> https://www.baeldung.com/java-socket-connection-read-timeout
 
 
 time_out is made by JAVA
 
-https://reintech.io/blog/java-network-programming-creating-managing-sockets
+> https://reintech.io/blog/java-network-programming-creating-managing-sockets
 
 我更是按照视频，做了逻辑字段的处理，主要的代码，都还是借鉴尚硅谷的旧版视频的；
 
@@ -96,7 +96,7 @@ https://reintech.io/blog/java-network-programming-creating-managing-sockets
 >从连接上，TCP/IP established, then the client write DataStream into the buff; Server 端的accept方法一直到客户端启动并向服务器发出请求为止一直在等待。但注意，此方法不支持多个客户端同时访问 simultaneously. //据说，即使server不accpet(), TCP has established. There is data transmitting.
 Java这里是怎么捕获client的socket的，为啥不会捕获错误？如何识别client1和client2，咱的client port设置的不都是一样的？多线程的client怎么标记的呢？
 
-1. 函数原型
+> 1. 函数原型
 accept函数允许在套接字上进行传入连接尝试。
 
 SOCKET WSAAPI accept(
