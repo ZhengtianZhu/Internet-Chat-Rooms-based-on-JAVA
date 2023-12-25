@@ -17,7 +17,7 @@ https://www.baeldung.com/a-guide-to-java-sockets#:~:text=Socket%20clientSocket%2
 Run the server first and then the client. The client should receive the "" message from the server and display it on the console.
 We have two files including Server.java and Client.java
 
-You need to set up a database and export parameters to edit initSQL() in both Java files.
+** You need to set up a database and export parameters to edit initSQL() in both Java files. **
 
 # 多线程实现Server和Client的收发同步：
 # My design
