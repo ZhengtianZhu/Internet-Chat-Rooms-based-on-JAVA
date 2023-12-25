@@ -19,19 +19,22 @@ We have two files including Server.java and Client.java
 # 多线程实现Server和Client的收发同步：
 # My design
 
+我的设计理念：上线了，构造函数自动给client 赋值生命Connected=true;
+该属性随着client的quit()消失而消失；
+查询client是否在线，则server每次都去数据库里看看当前client是Online or quit；
+
 ## As for the Client,
 * Symbol means different function. 每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
 * We use bConnected to judge whether a thread is alive at present.
 * A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
 
-Client启动的客户端，依据题目需要来运行程序；
-client通过多线程创建新的客户端
+
 
 
 ~~Maybe I need to initialize something to start some other functions, anyway.~~  <br>
 
 *  We use the socket to locate each client;
-* 
+*  Client启动的客户端，依据题目需要来运行程序；Client通过多线程创建新的客户端
 
 
 ## For the server,      
@@ -60,9 +63,7 @@ For the client "Alice", "hi" should appear on her console screen.
 //如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
 
 
-我的设计理念：上线了，构造函数自动给client 赋值生命Connected=true;
-该属性随着client的quit()消失而消失；
-查询client是否在线，则每次都去数据库里看看当前client是Online or quit；
+
 
 /to : meaning broadcast the message to all other clients.
 
