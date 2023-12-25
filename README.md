@@ -9,7 +9,7 @@ The Java Chat application I am going to build is a console application that is l
 2. The program runs in the console in the same computer.
 注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（），有需要的自行查阅资料。
 
-For the sake of simplicity, we’ll run our client and server programs on the same computer. If we were to execute them on different networked computers, the only thing that would change is the IP address. In this case, we’ll use localhost on 127.0.0.1.
+> For the sake of simplicity, we’ll run our client and server programs on the same computer. If we were to execute them on different networked computers, the only thing that would change is the IP address. In this case, we’ll use localhost on 127.0.0.1.
 https://www.baeldung.com/a-guide-to-java-sockets#:~:text=Socket%20clientSocket%20%3D%20serverSocket.accept%20%28%29%3B%20When%20the%20server,everything%20goes%20well%2C%20the%20server%20accepts%20the%20connection.
 
 # How to Run the application
@@ -17,30 +17,33 @@ https://www.baeldung.com/a-guide-to-java-sockets#:~:text=Socket%20clientSocket%2
 Run the server first and then the client. The client should receive the "" message from the server and display it on the console.
 We have two files including Server.java and Client.java
 # 多线程实现Server和Client的收发同步：
+# My design
 
 ## As for the Client,
-* item symbol means different function.
-* item We use bConnected to judge whether a thread is alive at present.
-* item A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
+* Symbol means different function. 每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
+* We use bConnected to judge whether a thread is alive at present.
+* A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
 
 Client启动的客户端，依据题目需要来运行程序；
 client通过多线程创建新的客户端
 
-I use the sql to process the data of the string.
+
 ~~Maybe I need to initialize something to start some other functions, anyway.~~  <br>
 
-* item We use the socket to locate each client;
+*  We use the socket to locate each client;
 * 
 
 
 ## For the server,      
-*item We have a list to accomdate clients 
-*item jdbc connects the local database to store the status of the client, like whether the client is online or has quitted.
-*item Server主循环接收Client的Socket连接， the server will use multiple threads to connect each Client.
+* We have a list to accomdate clients 
+* jdbc connects the local database to store the status of the client, like whether the client is online or has quitted.
+* Server主循环接收Client的Socket连接， the server will use multiple threads to connect each Client.
+* I use the sql to process the data of the string.
 
-we use the following methods to read and write for the data stream.
-dis = new DataInputStream(socket.getInputStream());            
+* we use the following methods to read and write for the data stream.
+> dis = new DataInputStream(socket.getInputStream());            
 dos = new DataOutputStream(socket.getOutputStream());
+* 消息都是以空格隔开的，所以我这里server 用readUTF()来读一行行消息
 
 
 
@@ -48,7 +51,6 @@ dos = new DataOutputStream(socket.getOutputStream());
 
 # Requirements list: 
 
-消息都是以空格隔开的，所以我这里用readUTF()来读一行行消息
 eg. Bob hi 1 Alice,
 "Bob" is the message sender, "hi" is the message,"1" means to ,"Alice" means the target receiver.
 For the client "Alice", "hi" should appear on her console screen.
@@ -72,8 +74,7 @@ For the client "Alice", "hi" should appear on her console screen.
 
 who: calculate the total number of the online clients.
 
-# My design
-每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
+
 
 ## SOCKET：
 >3.1. What Is “Connection Timed Out”?
