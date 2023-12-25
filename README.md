@@ -103,6 +103,7 @@ dos = new DataOutputStream(socket.getOutputStream());
 We use bConnected to judge whether a thread is alive at present.
 
 ## JDBC连接
+Server and client all need to connect to the database. They all need to register and connect, thus, TCP/IP has some function here, and we can easily understand why we need to write down those codes.
 一：JDBC
 
  sun：提供了一套通用性的接口：可以连接任何的数据库： 
