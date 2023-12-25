@@ -67,7 +67,10 @@ For the client "Alice", "hi" should appear on her console screen.
 /login: If it is the first time that the client logins, then the client will register its information, otherwise the server will check whether the login information of the client is right.
 *login.length()>=7)//首先名字长度得有, it must be larger than 7; there is no need to input the password, because this program does not have this function. 
 //如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
+  &emsp  if logining name has existed,  System.out.println("Name exist, please choose another name.");
+/quit: the client go offline.
 
+Other inputs can be summarized as invalid input.
 
 
 
@@ -75,7 +78,6 @@ For the client "Alice", "hi" should appear on her console screen.
 
 /to (client N, +message): meaning two clients talk privately. For example, client A starts the message "/to B I want to date with you", then the message will send to the client B, and it will receive the message " A: I want to date with you".
 
-/quit: the client go offline.
 
 /history:
 
