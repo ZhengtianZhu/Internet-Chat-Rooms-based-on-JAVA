@@ -22,7 +22,10 @@ We have two files including Server.java and Client.java
 # 多线程实现Server和Client的收发同步：
 # My design
 
-我的设计理念：上线了，构造函数自动给client 赋值生命Connected=true;
+我的设计理念：
+依照别人成熟的方案，进行编码执行，没有到达很高阶；
+
+上线了，构造函数自动给client 赋值生命Connected=true;
 该属性随着client的quit()消失而消失；
 查询client是否在线，则server每次都去数据库里看看当前client是Online or quit；
 
