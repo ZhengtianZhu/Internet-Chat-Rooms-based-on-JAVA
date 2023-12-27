@@ -53,7 +53,8 @@ We have two files including Server.java and Client.java
 > dis = new DataInputStream(socket.getInputStream());            
 dos = new DataOutputStream(socket.getOutputStream());
 * 消息都是以空格隔开的，所以我这里server 用readUTF()来读一行行消息
-
+### Flaws
+* I did not consider the size of receiving buffet because if there is so much data. If there exists new message, then the message will be read. I just have one while(True) loop for the server. 
 
 
 
