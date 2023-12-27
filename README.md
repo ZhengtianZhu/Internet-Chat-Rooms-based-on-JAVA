@@ -146,6 +146,14 @@ Server and client all need to connect to the database. They all need to register
 ————————————————
 版权声明：本文为CSDN博主「东方-教育技术博主」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/qq_41517071/article/details/84615765
+## Socket原理
+
+今天与同学争执一个话题：由于socket的accept函数在有客户端连接的时候产生了新的socket用于服务该客户端，那么，这个新的socket到底有没有占用一个新的端口？https://blog.51cto.com/ticktick/779866<br>
+
+
+First off, a "port" is just a number. All a "connection to a port" really represents is a packet which has that number specified in its "destination port" header field.  <br>
+
+https://stackoverflow.com/questions/3329641/how-do-multiple-clients-connect-simultaneously-to-one-port-say-80-on-a-server<br>
 # 搜狐北京 运维开发校招面试
 4. Read Timed Out  <br>
 4.1. What Is “Read Timed Out”?
