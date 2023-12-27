@@ -67,7 +67,7 @@ eg. Bob hi 1 Alice,
 For the client "Alice", "hi" should appear on her console screen.
 
 /login: If it is the first time that the client logins, then the client will register its information, otherwise the server will check whether the login information of the client is right.
-*login.length()>=7)//首先名字长度得有, it must be larger than 7; there is no need to input the password, because this program does not have this function. 
+*login.length()>=7)//首先名字长度得有, it must be larger than 7; there is no need to input the password, because this program does not have this function. Each client only has a unique name. 
 //如果输错，要一直循环等待输入，且quit指令还没放入login;配合mysql
   &emsp  if logining name has existed,  System.out.println("Name exist, please choose another name.");
 /quit: the client go offline.
