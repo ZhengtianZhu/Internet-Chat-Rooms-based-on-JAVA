@@ -33,6 +33,7 @@ We have two files including Server.java and Client.java
 * Symbol means different function. 每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
 * We use bConnected to judge whether a thread is alive at present.
 * A symbol means 标志位-num to label different functions, i.e., functions in the requirement list.
+* Every client has at most 50 messages that can be stored in local database. We seem to only have one table for all clients, which is a bug. They should set up a table for themselves each.
 
 
 
