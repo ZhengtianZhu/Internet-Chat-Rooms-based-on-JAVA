@@ -29,6 +29,9 @@ We have two files including Server.java and Client.java
 该属性随着client的quit()消失而消失；
 查询client是否在线，则server每次都去数据库里看看当前client是Online or quit；
 
+（中式英语）：
+Socket connection has solved the connection of IPs and ports for the source and destination.
+
 ## As for the Client,
 * Symbol means different function. 每出现一个新功能，就多一个sym标志位的数字，来检验新功能，于是有了很多if else
 * We use bConnected to judge whether a thread is alive at present.
