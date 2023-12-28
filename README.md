@@ -163,6 +163,13 @@ The read() method call in the InputStream blocks until it finishes reading data 
 
 another link:(awesome
 https://github.com/eugenp/tutorials/tree/master/core-java-modules/core-java-networking-3
+# 拓展
+生产环境中C/S架构，S一定是启用进程来对client进行服务的：
+服务器一般作 为守护进程始终运行， 监听网络端口， 一旦有客户请求， 就会启动一个服务进程来响应该客 户，同时自己继续监听服务端口，使后来的客户也得到响应的服务。 <br>
+ 
+ IP 层主要负责网络主机的定位，
+
+数据传输的路 由，由 IP 地址可以唯一地确定 Internet 上的一台主机。 而 TCP层则提供面向应用的可靠的 或非可靠的数据传输机制，这是网络编程的主要对象，一般不需要关心 IP 层是如何处理数 据的。 目前较为流行的网络编程模型是客户机。 <br>
 
 
 
