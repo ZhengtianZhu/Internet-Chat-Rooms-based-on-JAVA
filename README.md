@@ -4,7 +4,7 @@
 # Overview
 
 1. Overview of the Java Chat Application
-The Java Chat application I am going to build is a console application that is launched from the command line. I use MySQL to store the client login information, and the server will participate in each function. Besides, each meassage will be processed by the server. 
+The Java Chat application I am going to build is a console application that is launched from the command line. I use MySQL to store the client login information, and the server will participate in each function. Besides, each meassage will be processed by the server. Explanation: https://www.geeksforgeeks.org/multithreaded-servers-in-java/
 
 2. The program runs in the console in the same computer.
 注意：本项目只在单主机运行调试过，没试过在局域网和不同主机之间接发消息和文件（），有需要的自行查阅资料。
